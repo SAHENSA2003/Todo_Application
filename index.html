@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Application </title>
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            top: 0;
+            left: 0;
+            background-color: #a3a311;
+            justify-content: space-between;
+        }
+
+        .navbar .left {
+            margin-left: 20px;
+            font-size: 30px;
+            padding: 4px 4px 4px 4px;
+            font-weight: bold;
+        }
+
+        .navbar .right {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            list-style: none;
+            margin-right: 10px;
+        }
+
+        .navbar .right li:hover {
+            font-weight: bolder;
+            cursor: pointer;
+        }
+
+        .main_application {
+            border-radius: 15px;
+            height: 90vh;
+            width: 70vw;
+            margin: auto;
+            background-color: #ffddff;
+        }
+
+        .demo {
+            font-weight: 40px;
+        }
+
+        .add_todo {
+            text-align: center;
+        }
+
+        .input {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .input button {
+            padding: 3px 3px 3px 3px;
+            border-radius: 8px;
+            min-width: 10vw;
+
+        }
+
+        .edit,
+        .delete {
+            border-radius: 2px;
+            border: none;
+            background-color: violet;
+        }
+
+        .input button:hover,
+        .edit:hover,
+        .delete:hover {
+            font-weight: bold;
+            background-color: #0db3f5;
+            cursor: pointer;
+            border: 1px solid #0db3f5;
+            color: #ffffff;
+        }
+
+        .input .input_item {
+            width: 70%;
+            background-color: inherit;
+            height: 30px;
+            border-radius: 15px;
+
+        }
+
+        .your {
+            text-align: center;
+        }
+
+        .todos_container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            overflow: scroll;
+            max-height: 60%;
+            overflow-y: scroll;
+            scrollbar-width: none;
+        }
+
+        .todos_container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .todos {
+            display: flex;
+            justify-content: space-between;
+            width: 70%;
+            border-radius: 10px;
+            background-color: #c5f5fd;
+        }
+
+        .todos .check {
+            display: flex;
+            gap: 5px;
+        }
+
+        .todos .btn {
+            margin-left: 10px;
+            display: flex;
+            gap: 5px;
+            padding-right: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .your {
+            color: #ff0000;
+        }
+
+        .check input {
+            cursor: pointer;
+        }
+
+        @media (max-width:1024px) {
+
+            .input button:active,
+            .edit:active,
+            .delete:active {
+                font-weight: bold;
+                background-color: #0db3f5;
+                cursor: pointer;
+                border: 1px solid #0db3f5;
+                color: #ffffff;
+            }
+        }
+
+        @media (max-width:600px) {
+            .todos {
+                width: 80vw;
+                margin: auto;
+            }
+
+            .main_application {
+                width: 100vw;
+            }
+
+            .todos_container {
+                overflow-y: scroll;
+            }
+
+            .demo,
+            .add_todo,
+            .your,
+            .navbar .left {
+                font-size: 15px;
+            }
+
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="left">iManager</div>
+        <div class="right">
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+        </div>
+    </nav>
+    <div class="main_application">
+        <h1 class="demo">i task Manager every thing at one place</h1>
+        <h1 class="add_todo">ADD YOUR TODO</h1>
+        <div class="input">
+            <input class="input_item" type="text" placeholder="Add item...">
+            <button class="save">SAVE</button>
+        </div>
+        <h1 class="your"></h1>
+        <div class="todos_container">
+
+        </div>
+    </div>
+
+    <script>
+
+        console.log('Todo App with Local Storage');
+
+        document.querySelector('.your').innerHTML = 'NO TODO IS TO BE SEEN';
+
+        let Uid = 0;
+        let save_btn = document.querySelector('.save');
+
+
+        // Save all current todos to localStorage
+        function updateLocalStorage() {
+            let allTodos = [];
+            document.querySelectorAll('.todos').forEach(tododiv => {
+                let text = tododiv.querySelector('p').textContent;
+                let ischecked = tododiv.querySelector('input[type="checkBox"]').checked;
+                allTodos.push({ text: text, check: ischecked });
+            });
+            localStorage.setItem('todos', JSON.stringify(allTodos));
+        }
+        // Load saved todos when the page opens
+        function loadTodos() {
+            let alReadySave = JSON.parse(localStorage.getItem('todos')) || [];
+            alReadySave.forEach(Todo => {
+                createTodo(Todo.text, Todo.check);
+            })
+        }
+
+        // Function to create a todo in the DOM
+        function createTodo(pont1, isChecked = false) {
+            let todos = document.querySelector('.todos_container');
+            Uid++;
+            let editId = `Abc${Uid}`;
+            let deleteId = `Pqr${Uid}`;
+            let todoId = `Todo${Uid}`;
+            let textId = `Text${Uid}`;
+            let check2 = `check${Uid}`;
+
+            todos.insertAdjacentHTML('beforeend', `
+      <div id='${todoId}' class='todos'>
+        <div class='check'>
+          <input id='${check2}' type="checkbox">
+          <p id='${textId}'>${pont1}</p>
+        </div>
+        <div class='btn'>
+          <button class='edit' id='${editId}' class='edit'>EDIT</button>
+          <button class-'delete' id='${deleteId}' class='delete'>DELETE</button>
+        </div>
+      </div>
+    `);
+
+            // Update heading
+            if (document.querySelector(".todos_container").innerHTML.trim() === '') {
+                document.querySelector('.your').textContent = 'NO TODO IS TO BE SEEN';
+            } else {
+                document.querySelector('.your').innerHTML = 'YOUR TODOS 👇';
+                document.querySelector('.your').style.color = 'black';
+            }
+
+            let WholeTodo = document.querySelector(`#${todoId}`);
+            let textofTodo = document.querySelector(`#${textId}`);
+            let checkBox = WholeTodo.querySelector(`#${check2}`);
+
+            textofTodo.style.textDecoration = 'line-through';
+            textofTodo.style.fontStyle = 'italic';
+
+            // Handle checkbox
+
+            // Set initial state
+            if (isChecked) {
+                checkBox.checked = true;
+                textofTodo.style.textDecoration = 'none';
+                textofTodo.style.color = 'blue';
+                textofTodo.style.fontWeight = 'bold';
+                textofTodo.style.fontStyle = 'normal';
+            }
+
+            // Handle future clicks ← ADD THIS!
+            checkBox.addEventListener('change', () => {
+                if (checkBox.checked) {
+                    textofTodo.style.textDecoration = 'none';
+                    textofTodo.style.color = 'blue';
+                    textofTodo.style.fontWeight = 'bold';
+                    textofTodo.style.fontStyle = 'normal';
+                } else {
+                    textofTodo.style.textDecoration = 'line-through';
+                    textofTodo.style.color = 'black';
+                    textofTodo.style.fontWeight = 'none';
+                    textofTodo.style.fontStyle = 'italic';
+                }
+                updateLocalStorage();
+            });
+
+            // Edit button
+            document.querySelector(`#${editId}`).addEventListener('click', () => {
+                document.querySelector('.input_item').value = textofTodo.textContent;
+                WholeTodo.remove();
+                updateLocalStorage();
+
+                if (document.querySelector(".todos_container").innerHTML.trim() === '') {
+                    document.querySelector('.your').textContent = 'NO TODO IS TO BE SEEN';
+                    document.querySelector('.your').style.color = 'red';
+                }
+            });
+
+            // Delete button
+            document.querySelector(`#${deleteId}`).addEventListener('click', () => {
+                WholeTodo.remove();
+                updateLocalStorage();
+
+                if (document.querySelector(".todos_container").innerHTML.trim() === '') {
+                    document.querySelector('.your').textContent = 'NO TODO IS TO BE SEEN';
+                    document.querySelector('.your').style.color = 'red';
+                }
+            });
+
+            updateLocalStorage();
+        }
+
+        // Save button click handler
+        save_btn.addEventListener('click', () => {
+            let pont1 = document.querySelector('.input_item').value;
+            if (pont1 === '') {
+                console.log('No input');
+            } else {
+                createTodo(pont1);
+                document.querySelector('.input_item').value = '';
+            }
+        });
+
+        // Load saved todos when app starts
+        loadTodos();
+    </script>
+
+</body>
+
+</html>
