@@ -301,7 +301,9 @@
             // Edit button
             document.querySelector(`#${editId}`).addEventListener('click', () => {
                 document.querySelector('.input_item').value = textofTodo.textContent;
+                document.querySelector('.input_item').focus();
                 WholeTodo.remove();
+
                 updateLocalStorage();
 
                 if (document.querySelector(".todos_container").innerHTML.trim() === '') {
@@ -329,9 +331,11 @@
             let pont1 = document.querySelector('.input_item').value;
             if (pont1 === '') {
                 console.log('No input');
+                document.querySelector('.input_item').focus();
             } else {
                 createTodo(pont1);
                 document.querySelector('.input_item').value = '';
+                document.querySelector('.input_item').focus();
             }
         });
 
