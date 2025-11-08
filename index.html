@@ -330,7 +330,7 @@
         save_btn.addEventListener('click', () => {
             let pont1 = document.querySelector('.input_item').value;
             if (pont1 === '') {
-                console.log('No input');
+                alert('Give input First!!')
                 document.querySelector('.input_item').focus();
             } else {
                 createTodo(pont1);
