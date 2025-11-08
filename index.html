@@ -210,7 +210,6 @@
         console.log('Todo App with Local Storage');
 
         document.querySelector('.your').innerHTML = 'NO TODO IS TO BE SEEN';
-
         let Uid = 0;
         let save_btn = document.querySelector('.save');
 
@@ -315,6 +314,7 @@
             // Delete button
             document.querySelector(`#${deleteId}`).addEventListener('click', () => {
                 WholeTodo.remove();
+                document.querySelector('.input_item').focus();
                 updateLocalStorage();
 
                 if (document.querySelector(".todos_container").innerHTML.trim() === '') {
