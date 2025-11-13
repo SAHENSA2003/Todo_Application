@@ -314,7 +314,6 @@
             // Delete button
             document.querySelector(`#${deleteId}`).addEventListener('click', () => {
                 WholeTodo.remove();
-                document.querySelector('.input_item').focus();
                 updateLocalStorage();
 
                 if (document.querySelector(".todos_container").innerHTML.trim() === '') {
@@ -335,7 +334,6 @@
             } else {
                 createTodo(pont1);
                 document.querySelector('.input_item').value = '';
-                document.querySelector('.input_item').focus();
             }
         });
 
