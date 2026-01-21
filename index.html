@@ -121,6 +121,11 @@
             background-color: #c5f5fd;
         }
 
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
         .todos .check {
             display: flex;
             gap: 5px;
@@ -212,7 +217,11 @@
         document.querySelector('.your').innerHTML = 'NO TODO IS TO BE SEEN';
         let Uid = 0;
         let save_btn = document.querySelector('.save');
-
+        let EditDiv = null;
+        let Editing = false;
+        function select(elementName) {
+            return document.querySelector(elementName);
+        }
 
         // Save all current todos to localStorage
         function updateLocalStorage() {
@@ -242,18 +251,20 @@
             let textId = `Text${Uid}`;
             let check2 = `check${Uid}`;
 
-            todos.insertAdjacentHTML('beforeend', `
-      <div id='${todoId}' class='todos'>
-        <div class='check'>
+            let div = document.createElement('div');
+            div.id = todoId;
+            div.className = 'todos';
+            div.innerHTML = ` <div class='check'>
           <input id='${check2}' type="checkbox">
           <p id='${textId}'>${pont1}</p>
         </div>
         <div class='btn'>
           <button class='edit' id='${editId}' class='edit'>EDIT</button>
           <button class-'delete' id='${deleteId}' class='delete'>DELETE</button>
-        </div>
-      </div>
-    `);
+        </div>`
+
+            console.log(div)
+            todos.appendChild(div);
 
             // Update heading
             if (document.querySelector(".todos_container").innerHTML.trim() === '') {
@@ -296,26 +307,37 @@
                 }
                 updateLocalStorage();
             });
-
+            function activeEditing() {
+                if (Editing) {
+                    alert('You should update your CurrentEdit edit first.')
+                    return true;
+                }
+                return false;
+            }
             // Edit button
             document.querySelector(`#${editId}`).addEventListener('click', () => {
+                if (activeEditing()) return
+
+                EditDiv = div;
+                Editing = true;
                 document.querySelector('.input_item').value = textofTodo.textContent;
                 document.querySelector('.input_item').focus();
-                WholeTodo.remove();
+                save_btn.textContent = 'update';
+                EditDiv.classList.add('disabled');
 
                 updateLocalStorage();
-
-                if (document.querySelector(".todos_container").innerHTML.trim() === '') {
-                    document.querySelector('.your').textContent = 'NO TODO IS TO BE SEEN';
-                    document.querySelector('.your').style.color = 'red';
-                }
             });
 
             // Delete button
             document.querySelector(`#${deleteId}`).addEventListener('click', () => {
+                if (activeEditing()) return
+
+                let Confirm = confirm(`Are you sure to remove task (${div.querySelector('p').textContent})`);
+                if (!Confirm) return;
+
                 WholeTodo.remove();
-                document.querySelector('.input_item').focus();
                 updateLocalStorage();
+                select('.input_item').value = '';
 
                 if (document.querySelector(".todos_container").innerHTML.trim() === '') {
                     document.querySelector('.your').textContent = 'NO TODO IS TO BE SEEN';
@@ -325,17 +347,38 @@
 
             updateLocalStorage();
         }
+        function EditTask() {
+            let EditValue = select('.input_item').value;
+            if (EditValue === '') {
+                alert('Task cannot be blank or null');
+                select('.input_item').focus();
+                return
+            }
+            EditDiv.querySelector('p').textContent = EditValue;
+            EditDiv.classList.remove('disabled');
+            // reset Div
+            EditDiv = null;
+            select('.input_item').value = '';
+            save_btn.textContent = 'SAVE';
+            Editing = false;
+            updateLocalStorage();
 
+        }
         // Save button click handler
         save_btn.addEventListener('click', () => {
+            if (Editing) {
+                EditTask();
+                return;
+            }
+
+
             let pont1 = document.querySelector('.input_item').value;
-            if (pont1 === '') {
-                alert('Give input First!!')
+            if (select('.input_item').value === '') {
+                alert('Give task description first!!')
                 document.querySelector('.input_item').focus();
             } else {
                 createTodo(pont1);
                 document.querySelector('.input_item').value = '';
-                document.querySelector('.input_item').focus();
             }
         });
 
